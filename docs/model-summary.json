@@ -1,0 +1,68 @@
+[
+  {
+    "kind": "classification",
+    "model": "anthropic/claude-haiku-4.5",
+    "correct": 8,
+    "total": 8,
+    "median_s": 1.796,
+    "mean_s": 1.996,
+    "reported_cost_usd": 0.00196,
+    "cost_coverage": 8,
+    "errors": 0
+  },
+  {
+    "kind": "classification",
+    "model": "google/gemini-2.5-flash-lite",
+    "correct": 7,
+    "total": 8,
+    "median_s": 1.95,
+    "mean_s": 1.776,
+    "reported_cost_usd": 0.0001329,
+    "cost_coverage": 7,
+    "errors": 1
+  },
+  {
+    "kind": "classification",
+    "model": "typesafe/jev-1.13",
+    "correct": 8,
+    "total": 8,
+    "median_s": 1.582,
+    "mean_s": 1.518,
+    "reported_cost_usd": 0.00013314,
+    "cost_coverage": 8,
+    "errors": 0
+  },
+  {
+    "kind": "tools",
+    "model": "anthropic/claude-haiku-4.5",
+    "correct": 8,
+    "total": 8,
+    "median_s": 2.24,
+    "mean_s": 2.375,
+    "reported_cost_usd": 0.009705,
+    "cost_coverage": 8,
+    "errors": 0
+  },
+  {
+    "kind": "tools",
+    "model": "google/gemini-2.5-flash-lite",
+    "correct": 7,
+    "total": 8,
+    "median_s": 1.493,
+    "mean_s": 1.608,
+    "reported_cost_usd": 0.0003336,
+    "cost_coverage": 8,
+    "errors": 0
+  },
+  {
+    "kind": "tools",
+    "model": "qwen/qwen3-30b-a3b-instruct-2507",
+    "correct": 6,
+    "total": 8,
+    "median_s": 4.349,
+    "mean_s": 4.737,
+    "reported_cost_usd": 0.00043569,
+    "cost_coverage": 8,
+    "errors": 0
+  }
+]

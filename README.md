@@ -1,77 +1,99 @@
 # Two Agents, One Task
 
-Two separate FastAPI processes use LangGraph and a small A2A v0.3.0 JSON-RPC implementation. Keycloak supplies OAuth authorization; B independently checks signed tokens and permissions.
+Two independent FastAPI processes run bounded LangGraph tool-calling agents. A owns conversation and delegation; B owns authorization, inventory and booking outcomes. Keycloak owns login, consent and signed token issuance. A and B communicate only over A2A HTTP; only B accesses the booking database. Local observer pages are separate from that communication channel.
 
-## Run (Windows / Python 3.12+ / Docker Desktop)
+## Run
 
-From this directory:
+Requires Python 3.12+ and Docker Desktop. From this directory:
 
 ```powershell
 python -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt
 .venv/Scripts/python scripts/setup.py
-```
-
-Setup generates random local secrets and two users. Add your OpenRouter key to `.env`. Read the generated passwords in `runtime/demo-users.json`; these are local demo credentials, not submission assets. Never rerun setup against an initialized realm. Start Docker Desktop, then:
-
-```powershell
 docker compose up -d keycloak
 ```
 
-Wait for http://localhost:8080/realms/airline-demo/.well-known/openid-configuration to respond. In separate terminals:
+Run setup only once. It generates `.env`, the Keycloak realm and local users. Add OPENROUTER_API_KEY to `.env`; read demo passwords in `runtime/demo-users.json`. Neither file belongs in the submission. Wait for http://localhost:8080/realms/airline-demo/.well-known/openid-configuration to respond, then start all four local services:
 
 ```powershell
-.venv/Scripts/python -m uvicorn app.b:app --host 127.0.0.1 --port 8001
-.venv/Scripts/python -m uvicorn app.a:app --host 127.0.0.1 --port 8000
+powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 ```
 
-Alternatively `powershell -ExecutionPolicy Bypass -File scripts/start.ps1` starts both in the background and prints process IDs. Stop those IDs with `Stop-Process -Id <id>`; stop Keycloak with `docker compose down`.
+Or run these separately:
 
-Open **http://localhost:8000** (use localhost, not 127.0.0.1, in the browser).
+```powershell
+.venv/Scripts/python -m uvicorn app.a:app --host 127.0.0.1 --port 8000
+.venv/Scripts/python -m uvicorn app.b:app --host 127.0.0.1 --port 8001
+.venv/Scripts/python -m uvicorn app.logs:app --host 127.0.0.1 --port 8002
+.venv/Scripts/python -m uvicorn app.bookings:app --host 127.0.0.1 --port 8003
+```
 
-1. Say “Book from BOM to Dubai tomorrow at 7pm”.
-2. Click Authorize with airline; log in as alice using the generated password. Approve search and book.
-3. Inspect AI233, departure 19:00, price USD 240; confirm the booking.
-4. Say “Cancel it”. A pauses for additional consent. No cancellation is sent yet.
-5. Authorize cancellation using the same airline account. The booking becomes cancelled.
-6. Repeat and deny the cancellation grant to show that the booking remains active.
+Use localhost in the browser. Chat: http://localhost:8000; events: http://localhost:8002; bookings: http://localhost:8003. Observers are unauthenticated, read-only local demo views: bind to loopback, never expose publicly. Booking users are pseudonymized. They do not send commands to either agent. Stop printed process IDs using Stop-Process; stop Keycloak with docker compose down. Restart A/B after changing model/key settings.
 
-The input must include origin; the assistant asks for missing details. Flight times are departure-local (BOM Asia/Kolkata, DXB Asia/Dubai); relative dates use Asia/Dubai. Fixtures marked tomorrow are resolved on B's first database initialization. After a date change, stop B and remove only its disposable `runtime/b.sqlite` before restarting.
+## Demo
 
-## Trust boundaries and OAuth
+1. Ask “Book from BOM to Dubai tomorrow at 7pm”. A discovers B and requests search/book consent at Keycloak. Sign in as alice using the generated password.
+2. Review AI233, 19:00, USD 240. **Approve purchase** in A; B verifies the token, creates the user-owned booking and returns confirmed.
+3. Say “Cancel it”. A requests fresh flights:cancel consent before contacting B to cancel.
+4. Search-only requests require only flights:search and never create a booking.
+5. After New chat, cancel by explicit booking reference. B still checks the verified user's ownership; the reference alone grants nothing.
 
-A is the confidential OAuth client, Keycloak the airline's authorization server, and B the resource server. A initiates consent; the user approves at Keycloak. Authorization Code + PKCE S256 uses exact callback registration, single-use state bound to the browser and pending graph, a short code exchange, and five-minute signed access tokens. No refresh tokens are requested.
+A accepts exact HH:MM or any/daytime/morning/afternoon/evening. Multiple flight matches require selection then purchase approval. Empty results report B's actual inventory response; there are no Kochi flights in the supplied fixture. Tomorrow resolves when B first seeds SQLite. After a date change, stop B and remove only disposable runtime/b.sqlite to reseed. User-relative dates use Asia/Dubai; flight departure times are airport-local. New chat clears A state/token/pending callbacks without cancelling bookings or revoking Keycloak grants. Old callback links cannot be reused; expired current callbacks offer fresh authorization.
 
-A keeps tokens server-side. B verifies RS256 signature from JWKS, issuer, audience, expiry, subject and authorized client. It checks the required operation scope before invoking its graph, and again in execution. Booking owner is the verified issuer + subject, never an A-supplied user ID. A refuses an account switch during scope escalation. Keycloak optional client scopes keep cancellation out of the initial grant.
+## Why A2A, and exactly what is implemented
 
-OAuth consent permits classes of actions; A's itinerary confirmation approves a specific purchase. These are distinct steps. Local HTTP and development-mode Keycloak are local-demo exceptions; production needs HTTPS, hardened Keycloak, persistent encrypted token storage, session expiry/cleanup, durable graph checkpoints, rate limits and monitoring.
+**Protocol: A2A v0.3.0, JSON-RPC 2.0 over HTTP. Official Python package: a2a-sdk[http-server]==0.3.26.** We deliberately retain the 0.3 wire version to avoid an unrelated protocol migration while replacing custom transport code. This is not the latest SDK major release.
 
-## Protocol and agents
+A2A fits cross-company task delegation: capability discovery, typed messages, task IDs and result artifacts without exposing B's internal tools or database. Plain custom REST could implement this small demo, but A2A gives those interactions a standard shape; MCP would focus on exposing tools rather than this agent-to-agent task boundary. OAuth remains a separate delegated-permission mechanism.
 
-B publishes `/.well-known/agent-card.json` with its skills and OAuth flow. A discovers at a configured trusted base URL. The `/a2a` JSON-RPC endpoint implements `message/send`, `tasks/get` and terminal-task cancellation errors. `DataPart` carries application operations `search_flights`, `book_flight`, `cancel_booking`; artifacts carry results. The operation schema is our convention, not a standard airline A2A API. Tokens travel only in the HTTP Authorization header.
+A uses the official A2ACardResolver and JsonRpcTransport with SDK Message/Part/DataPart models. B uses A2AStarletteApplication, DefaultRequestHandler, a custom AgentExecutor, and an ownership-aware InMemoryTaskStore. SDK code handles JSON-RPC envelopes, typed parsing and task lifecycle. B's application middleware authenticates tokens and checks scopes before SDK execution; its tools repeat authorization and enforce exact delegation arguments. Booking owner is the verified issuer + subject. Task lookup checks that same identity.
 
-This is a hand-written, synchronous A2A subset using the v0.3.0 wire shapes, rather than the originally proposed SDK. It keeps the interview implementation small; full SDK conformance/interoperability is not claimed. Task cancellation is not booking cancellation. All returned tasks are terminal, and ownership protects task reads.
+Only the synchronous feature set is used: discovery, message/send, completed Task/artifact results and tasks/get. Terminal tasks cannot be cancelled; airline booking cancellation is an application operation inside message/send. search_flights/book_flight/cancel_booking are our business schemas, not standard A2A method names. Streaming/push are advertised off. Official SDK use and SDK roundtrip tests are not a claim of independent certification or interoperability with every external agent.
 
-A's graph: consent → search → itinerary confirmation → execute. LangGraph interrupts resume the same checkpoint after browser consent/confirmation. B's graph is a small deterministic executor. Neither model decides permissions or owns the database. A and B share code definitions but no runtime database. A contacts B only over HTTP.
+[Official SDK](https://github.com/a2aproject/a2a-python) · [Pinned protocol](https://a2a-protocol.org/v0.3.0/specification/)
 
-A uses `google/gemini-2.5-flash-lite` through OpenRouter for narrow structured intent extraction. B has no unnecessary model call. Set OPENROUTER_MODEL to compare alternatives. The default is a cost/speed hypothesis, not a measured benchmark; review A's model_usage events for usage and evaluate accuracy/latency with the actual key before presenting claims. Model/API failures fail closed.
+## OAuth and safety boundaries
 
-## Verification and trace
+Authorization Code + PKCE S256 uses single-use state bound to browser session and pending operation, exact redirect registration, and confidential client authentication. Keycloak issues short-lived tokens. A keeps them server-side. B verifies RS256 signature via JWKS, issuer, audience airline-agent-b, expiry, subject and authorized client travel-agent-a. The requested operation determines required scope. A pauses for additional consent before sending out-of-scope business requests; B rejects unauthorized direct requests independently. A's purchase button is user approval; B's transaction is authoritative confirmation.
+
+Token claims/credentials stay outside model prompts and log files. Models propose native tools; code enforces scope, identity, ownership and transactional inventory updates. B rejects any model call whose operation/arguments differ from the delegation. Booking retries use idempotency keys; cancellations are idempotent. The event ledger records confirmations/cancellations atomically and does not duplicate retries. Historical timestamps are not invented.
+
+## Agents and measured model choices
+
+A uses Jev classification then a Haiku reason/tools loop: discover_airline, search_flights, book_flight, cancel_booking. Tool handlers enter a deterministic LangGraph workflow that pauses for OAuth, flight selection and purchase approval. B uses its own Haiku loop with inspect_flight, search_inventory, create_booking and cancel_reservation. Each loop allows five model steps and one tool per step. Both fail closed if primary and fallback models fail. Gemini is the fallback, with the same tool validation. The legacy app/dialogue.py extraction graph is not used by the live chat route.
+
+Configuration: CLASSIFIER_MODEL=typesafe/jev-1.13; DIALOGUE_MODEL=anthropic/claude-haiku-4.5; AGENT_B_MODEL=anthropic/claude-haiku-4.5; FALLBACK_MODEL=google/gemini-2.5-flash-lite. The old OPENROUTER_MODEL setting is unused.
+
+| Task | Model | Correct | Median seconds | Observed inference cost, USD | Cost coverage |
+|---|---|---:|---:|---:|---:|
+| classification | anthropic/claude-haiku-4.5 | 8/8 | 1.796 | 0.00196000 | 8/8 |
+| classification | google/gemini-2.5-flash-lite | 7/8 | 1.950 | 0.00013290 | 7/8 |
+| classification | typesafe/jev-1.13 | 8/8 | 1.582 | 0.00013314 | 8/8 |
+| tools | anthropic/claude-haiku-4.5 | 8/8 | 2.240 | 0.00970500 | 8/8 |
+| tools | google/gemini-2.5-flash-lite | 7/8 | 1.493 | 0.00033360 | 8/8 |
+| tools | qwen/qwen3-30b-a3b-instruct-2507 | 6/8 | 4.349 | 0.00043569 | 8/8 |
+
+The table reports one pass over eight synthetic fixtures per task, not production accuracy. Haiku was strongest on exact tool selection/arguments (8/8); Gemini was faster and much cheaper but failed the follow-up time enum (7/8). Qwen scored 6/8. Jev matched Haiku classification at lower observed latency/cost. Gemini classification had one HTTP failure, not an observed semantic misclassification. Haiku's account uses BYOK: upstream cost is reported rather than falsely treating its zero OpenRouter platform charge as free. The partial Gemini classification cost covers 7/8 calls.
+
+See [full methodology, failures and limits](docs/model-comparison.md), [raw final measurements](docs/model-comparison.json), and [aggregate results](docs/model-summary.json). The diagnostic first run is preserved separately; it is not pooled with the final run. This small test does not measure full-agent latency or B-specific multi-step planning, and does not statistically prove model superiority.
+
+## Checks and hand-in
 
 ```powershell
 .venv/Scripts/python -m pytest -q --basetemp=runtime/test-tmp
+.venv/Scripts/python scripts/full_smoke.py
+.venv/Scripts/python scripts/oauth_smoke.py
+.venv/Scripts/python -m scripts.benchmark
+.venv/Scripts/python -m scripts.diagrams
+.venv/Scripts/python scripts/package.py --id YOUR_ID
 ```
 
-Tests generate RSA keys, exercise B over HTTP with signed tokens, and validate A's consent pause. They do not replace a real browser/Keycloak walkthrough. Redacted runtime events appear in `runtime/A.jsonl` and `runtime/B.jsonl`. No bearer tokens or client secrets are logged. `docs/message-trace.md` describes message ownership and identifies illustrative events.
+Tests use generated RSA keys and stub model proposals; they exercise SDK roundtrips, token rejection, task/user ownership, scopes, idempotency, delegation guards, OAuth expiry and cross-chat cancellation. Live smoke uses real models/Keycloak, books then cancels a synthetic seat. Benchmark never executes tools. It incurs small API charges and overwrites final results if rerun.
 
-Limitations: A sessions/checkpoints and B task records are in memory; restart loses pending work. Bookings/inventory persist in B's SQLite. Run one worker per service. No payments, passenger management, refresh/revocation, arbitrary airline discovery or production deployment. Database writes use transactions; booking retries use a per-intent idempotency key. Cancellation is naturally idempotent. A requires a real model key; no silent parser fallback disguises API failure.
+See docs/architecture.md for generated LangGraph exports and the full architecture; docs/message-trace.md for message ownership; docs/approach.pptx for the eight-slide hand-in. Packaging uses an explicit allowlist, excludes runtime credentials/.env and creates YOUR_ID_challenge-4.zip. Replace YOUR_ID with the actual submission ID. No email is sent automatically.
 
-## Submission
+Limits: one worker per agent; A sessions/checkpoints and B task store are in memory. Bookings/inventory persist in SQLite. Restart loses pending conversations. Local HTTP/development Keycloak, synthetic flights, no payments, no refresh/revocation or production deployment. Production needs HTTPS, hardened identity infrastructure, durable encrypted session/token storage and operational controls.
 
-Run `python scripts/package.py --id YOUR_ID` to create `YOUR_ID_challenge-4.zip`. It includes an explicit allowlist of source, docs, fixtures and the PPTX, excluding `.env`, runtime state and credentials. Review the zip before emailing it to the brief's address. The script does not send email.
+## Simplified presentation diagram
 
-References: https://a2a-protocol.org/v0.3.0/specification/ ; https://www.ietf.org/rfc/rfc9700.pdf ; https://docs.langchain.com/oss/python/langgraph/interrupts ; https://www.keycloak.org/docs/latest/server_admin/index.html
-
-For a real Keycloak / B integration smoke test (requires the services running): `.venv/Scripts/python scripts/oauth_smoke.py`. It signs in as the generated demo user, books a seat, verifies cancellation rejection and then obtains fresh cancellation consent to clean up. It bypasses A and OpenRouter deliberately so provider/token enforcement can be tested independently.
-
-Local verification: nine automated tests passed, and the real-provider smoke test passed. The full browser chat still needs your OpenRouter key. After adding it, stop/restart A so it reloads `.env`. See docs/verification.md.
+See [A + B + OAuth in one diagram](docs/simplified-architecture.md). OAuth consent grants scoped permission; it does not purchase a specific itinerary. The user clicks Approve purchase in A after reviewing the actual flight/price. B then independently verifies authorization and commits the booking transaction. A's model cannot give this approval. This extra itinerary approval is our application safeguard, not an OAuth/A2A requirement.

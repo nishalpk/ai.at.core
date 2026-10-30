@@ -21,34 +21,51 @@ class State(TypedDict,total=False):
 
 def consent(s):
     session=sessions[s['sid']]
-    scopes={'flights:cancel'} if s['intent']['action']=='cancel' else {'flights:search','flights:book'}
+    scopes={'search':{'flights:search'},'book':{'flights:search','flights:book'},'cancel':{'flights:cancel'}}[s['intent']['action']]
     claims=session.get('claims',{})
     if claims.get('exp',0)<time.time()+15 or not scopes.issubset(set(claims.get('scope','').split())):
         interrupt({'type':'consent','url':'/oauth/start','scopes':sorted(scopes)})
     return {}
 async def call_b(s,op,args):
     session=sessions[s['sid']]
-    async with httpx.AsyncClient(timeout=20) as client:
-        response=await client.post(session['card']['url'],headers={'Authorization':'Bearer '+session['token']},json={'jsonrpc':'2.0','id':str(uuid.uuid4()),'method':'message/send','params':{'message':{'kind':'message','role':'user','messageId':str(uuid.uuid4()),'parts':[{'kind':'data','data':{'operation':op,'args':args}}]}}})
-        response.raise_for_status(); payload=response.json()
-    trace('A','a2a_result',operation=op,success='error' not in payload)
-    if 'error' in payload: raise ValueError(payload['error']['message'])
-    return payload['result']['artifacts'][0]['parts'][0]['data']
+    from a2a.client.transports.jsonrpc import JsonRpcTransport
+    from a2a.types import AgentCard,MessageSendParams,Message,Part,DataPart,Role,Task
+    async with httpx.AsyncClient(timeout=60,headers={'Authorization':'Bearer '+session['token']}) as client:
+        transport=JsonRpcTransport(client,agent_card=AgentCard.model_validate(session['card']))
+        task=await transport.send_message(MessageSendParams(message=Message(role=Role.user,message_id=str(uuid.uuid4()),parts=[Part(root=DataPart(data={'operation':op,'args':args}))])))
+    trace('A','a2a_result',operation=op,success=True)
+    if not isinstance(task,Task) or not task.artifacts: raise ValueError('Airline returned no task artifact')
+    return task.artifacts[0].parts[0].root.data
+
 async def search(s):
     if s['intent']['action']=='cancel': return {}
     result=await call_b(s,'search_flights',{k:s['intent'][k] for k in ('origin','destination','date')})
-    flights=[f for f in result['flights'] if f['depart']==s['intent']['time'] and f['seats_left']>0]
-    if len(flights)!=1: raise ValueError('No unique available flight. Specify route, date and departure time.')
+    preference=s['intent']['time']
+    def matches(f):
+        hour=int(f['depart'].split(':')[0])
+        windows={'any':(0,24),'daytime':(6,18),'morning':(6,12),'afternoon':(12,18),'evening':(18,24)}
+        return windows[preference][0]<=hour<windows[preference][1] if preference in windows else f['depart']==preference
+    flights=[f for f in result['flights'] if matches(f) and f['seats_left']>0]
+    if not flights:
+        i=s['intent']
+        raise ValueError(f"The airline returned no available flights from {i['origin']} to {i['destination']} on {i['date']} matching {preference}. This demo has limited sample inventory, not live worldwide flights. Try a different route, date or time; the supplied sample includes BOM to DXB tomorrow.")
+    if s['intent']['action']=='search': return {'result':{'flights':flights}}
+    if len(flights)>1:
+        choice=interrupt({'type':'select','flights':flights,'message':'I found these available flights. Choose one to review before booking.'})
+        flights=[f for f in flights if f['id']==choice]
+        if len(flights)!=1: raise ValueError('Please choose one of the returned flight options.')
     return {'result':{'flight':flights[0]}}
+
 def confirm(s):
     if s['intent']['action']=='book':
         if interrupt({'type':'confirm','flight':s['result']['flight']}) is not True: raise ValueError('Booking declined')
     return {}
 async def execute(s):
     session=sessions[s['sid']]; intent=s['intent']
+    if intent['action']=='search': return {'result':s['result']}
     if intent['action']=='cancel':
-        bid=session.get('booking_id')
-        if not bid: raise ValueError('No booking in this session')
+        bid=intent.get('booking_id') or session.get('booking_id')
+        if not bid: raise ValueError('Please provide the booking reference to cancel.')
         result=await call_b(s,'cancel_booking',{'booking_id':bid,'idempotency_key':intent['key']})
     else:
         result=await call_b(s,'book_flight',{'flight_id':s['result']['flight']['id'],'idempotency_key':intent['key']})
@@ -64,6 +81,17 @@ def session(request):
     return sid,sessions[sid]
 def csrf(request):
     if request.headers.get('origin')!='http://localhost:8000': raise HTTPException(403,'Invalid origin')
+def record(s,view):
+    if 'message' not in view:
+        if view['type']=='consent': view['message']='Please authorize '+', '.join(view['scopes'])+' with the airline to continue. Search permission does not allow booking.'
+        elif view['type']=='confirm':
+            f=view['flight']; view['message']=f"I found {f['id']} from {f['origin']} to {f['destination']} on {f['date']} at {f['depart']}, for USD {f['price_usd']}. Approve this purchase to ask the airline to confirm your booking?"
+        elif view['type']=='result' and 'flights' in view['data']:
+            view['message']='Here are the available flights:\n'+'\n'.join(f"{f['id']} · {f['origin']} to {f['destination']} · {f['date']} {f['depart']} · USD {f['price_usd']}" for f in view['data']['flights'])+'\nNo booking has been made. Tell me if you would like to book one.'
+        elif view['type']=='result': view['message']=f"The airline confirmed your booking status: {view['data']['status']}. Reference: {view['data']['booking_id']}."
+    s.setdefault('history',[]).append({'role':'assistant','content':view.get('message','')})
+    s['view']=view
+    return {**view,'history':s['history']}
 async def run(sid,value):
     cfg={'configurable':{'thread_id':sessions[sid]['thread']}}
     try:
@@ -73,7 +101,7 @@ async def run(sid,value):
     except Exception as e:
         trace('A','operation_failed',error=type(e).__name__)
         sessions[sid]['view']={'type':'error','message':str(e) if isinstance(e,ValueError) else 'Service request failed. Check both services and retry.'}
-    return sessions[sid]['view']
+    return record(sessions[sid],sessions[sid]['view'])
 @app.get('/',response_class=HTMLResponse)
 def home(request:Request):
     sid=request.cookies.get('sid')
@@ -81,24 +109,37 @@ def home(request:Request):
     response=HTMLResponse(Path('web/index.html').read_text(encoding='utf-8')); response.set_cookie('sid',sid,httponly=True,samesite='lax',max_age=3600)
     return response
 @app.get('/api/status')
-def status(request:Request): return session(request)[1]['view']
+def status(request:Request):
+    s=session(request)[1]; return {**s['view'],'history':s.get('history',[])}
 @app.post('/api/chat')
 async def chat(request:Request):
     csrf(request); sid,s=session(request)
-    if s['view'].get('type') in ('consent','confirm'): raise HTTPException(409,'Complete the pending step first')
+    waiting=s['view'] if s['view'].get('type') in ('consent','confirm','select') else None
     text=(await request.json()).get('message','')[:2000]
     if not os.getenv('OPENROUTER_API_KEY'): raise HTTPException(503,'Set OPENROUTER_API_KEY in .env and restart A')
-    today=datetime.now(ZoneInfo('Asia/Dubai')).date()
-    async with httpx.AsyncClient(timeout=30) as client:
-        r=await client.post('https://openrouter.ai/api/v1/chat/completions',headers={'Authorization':'Bearer '+os.environ['OPENROUTER_API_KEY']},json={'model':os.getenv('OPENROUTER_MODEL','google/gemini-2.5-flash-lite'),'temperature':0,'response_format':{'type':'json_object'},'messages':[{'role':'system','content':f'Extract flight intent as JSON: action (book or cancel), origin IATA, destination IATA, date YYYY-MM-DD, time HH:MM. Today is {today}. For missing booking details return action clarify and question. Do not assume departure origin. Cancellation refers to current session booking.'},{'role':'user','content':text}]})
-        r.raise_for_status(); data=r.json(); intent=json.loads(data['choices'][0]['message']['content'])
-        trace('A','model_usage',model=os.getenv('OPENROUTER_MODEL','google/gemini-2.5-flash-lite'),usage=data.get('usage',{}))
-        card=(await client.get(B_URL+'/.well-known/agent-card.json')).json()
-    if intent.get('action') not in ('book','cancel'): return {'type':'error','message':intent.get('question','Please provide origin, destination, date and departure time.')}
-    if intent['action']=='book' and any(not intent.get(k) for k in ('origin','destination','date','time')): raise HTTPException(400,'Please specify route, date and departure time')
-    if card.get('protocolVersion')!='0.3.0' or card.get('url')!=B_URL+'/a2a': raise HTTPException(502,'Unexpected airline card')
-    s['card']=card; s['thread']=str(uuid.uuid4()); intent['key']=str(uuid.uuid4())
-    return await run(sid,{'sid':sid,'intent':intent})
+    s.setdefault('history',[]).append({'role':'user','content':text})
+    if waiting:
+        return record(s,{**waiting,'message':'Please use the pending airline authorization, flight selection, or booking confirmation buttons. Chat cannot approve these steps.'})
+    try:
+        from app.travel_agent import respond
+        return await respond(sid)
+    except Exception as e:
+        trace('A','agent_failed',error=type(e).__name__)
+        return record(s,{'type':'error','message':'The agent could not complete this turn. Please try again; no additional action was approved.'})
+@app.post('/api/reset')
+async def reset(request:Request):
+    csrf(request); sid,s=session(request)
+    for state in [k for k,v in pending.items() if v['sid']==sid]: pending.pop(state,None)
+    sessions[sid]={'view':{'type':'ready'}}
+    trace('A','chat_reset')
+    return {'type':'ready','history':[]}
+@app.post('/api/select')
+async def selection(request:Request):
+    csrf(request); sid,s=session(request)
+    if s['view'].get('type')!='select': raise HTTPException(409,'No selection pending')
+    choice=(await request.json()).get('flight_id')
+    if choice not in [f['id'] for f in s['view']['flights']]: raise HTTPException(400,'Invalid flight selection')
+    return await run(sid,Command(resume=choice))
 @app.post('/api/confirm')
 async def confirmation(request:Request):
     csrf(request); sid,s=session(request)
@@ -116,10 +157,20 @@ def oauth_start(request:Request):
     return RedirectResponse(url)
 @app.get('/oauth/callback')
 async def callback(request:Request):
-    sid,s=session(request); p=pending.pop(request.query_params.get('state',''),None)
-    if not p or p['sid']!=sid or p['expires']<time.time() or p['thread']!=s.get('thread'): raise HTTPException(400,'Invalid OAuth state')
+    sid=request.cookies.get('sid'); s=sessions.get(sid)
+    state=request.query_params.get('state',''); p=pending.get(state)
+    def recovery(message):
+        return HTMLResponse('<!doctype html><html><head><title>Restart airline authorization</title></head><body style="font:18px system-ui;max-width:650px;margin:80px auto;padding:24px"><h1>Airline authorization needs restarting</h1><p>'+message+'</p><p>No operation was resumed from this callback.</p><a href="/">Return to chat</a></body></html>',status_code=400)
+    if not s or not p or p['sid']!=sid or p['thread']!=s.get('thread'):
+        return recovery('This login link is stale or belongs to an earlier chat. Return to chat and start authorization again. A server restart or New chat invalidates old links.')
+    pending.pop(state,None)
+    if p['expires']<time.time() or request.query_params.get('error')=='temporarily_unavailable':
+        if s['view'].get('type')=='consent':
+            record(s,{**s['view'],'message':'The airline login timed out. Please click Authorize with airline again to start a fresh login. No action was performed.'})
+        trace('A','oauth_expired')
+        return RedirectResponse('/')
     if 'error' in request.query_params:
-        s['view']={'type':'error','message':'Authorization denied; no action performed.'}; return RedirectResponse('/')
+        record(s,{'type':'error','message':'Authorization denied; no action performed.'}); return RedirectResponse('/')
     async with httpx.AsyncClient(timeout=20) as client:
         r=await client.post(ISSUER+'/protocol/openid-connect/token',data={'grant_type':'authorization_code','client_id':CLIENT,'client_secret':os.environ['OAUTH_CLIENT_SECRET'],'redirect_uri':CALLBACK,'code':request.query_params.get('code',''),'code_verifier':p['verifier']})
         if r.status_code!=200: raise HTTPException(400,'Token exchange failed')

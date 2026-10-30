@@ -1,0 +1,2246 @@
+{
+  "date": "2026-10-30",
+  "method": "One pass per model/case; randomized order seed42, concurrency2, temperature0, max_tokens400 for chat. Provider-reported upstream inference cost when available (including BYOK), otherwise platform cost; no estimates; latency includes HTTP and provider routing. Tool schemas are simplified equivalents; tools never execute.",
+  "rows": [
+    {
+      "kind": "classification",
+      "model": "typesafe/jev-1.13",
+      "case": "followup",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.7304e-05,
+      "served_model": "typesafe/jev-1.13-20260917",
+      "usage": {
+        "input_tokens": 412,
+        "output_tokens": 45,
+        "cost": 1.7304e-05
+      },
+      "platform_cost_usd": 1.7304e-05,
+      "byok": false,
+      "response": {
+        "intent": {
+          "type": "choice",
+          "choice": "search",
+          "probabilities": {
+            "search": 0.69,
+            "book": 0.02,
+            "cancel": 0,
+            "chat": 0.29
+          },
+          "confidence": 0.59
+        }
+      },
+      "actual": "search",
+      "latency_s": 1.163
+    },
+    {
+      "kind": "classification",
+      "model": "typesafe/jev-1.13",
+      "case": "search",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.6674e-05,
+      "served_model": "typesafe/jev-1.13-20260917",
+      "usage": {
+        "input_tokens": 397,
+        "output_tokens": 45,
+        "cost": 1.6674e-05
+      },
+      "platform_cost_usd": 1.6674e-05,
+      "byok": false,
+      "response": {
+        "intent": {
+          "type": "choice",
+          "choice": "search",
+          "probabilities": {
+            "search": 0.78,
+            "book": 0.2,
+            "cancel": 0,
+            "chat": 0.02
+          },
+          "confidence": 0.71
+        }
+      },
+      "actual": "search",
+      "latency_s": 0.832
+    },
+    {
+      "kind": "tools",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "cancel",
+      "expected": "cancel",
+      "correct": true,
+      "error": null,
+      "cost_usd": 3.54e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 270,
+        "completion_tokens": 21,
+        "total_tokens": 291,
+        "cost": 3.54e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 3.54e-05,
+          "upstream_inference_prompt_cost": 2.7e-05,
+          "upstream_inference_completions_cost": 8.4e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 3.54e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "tool_cancel_hplaACZbN7XdE5GF0DeX",
+            "function": {
+              "name": "cancel",
+              "arguments": "{\"booking_id\":\"old-reference-123\"}"
+            }
+          }
+        ]
+      },
+      "actual": "cancel",
+      "arguments": {
+        "booking_id": "old-reference-123"
+      },
+      "latency_s": 1.053
+    },
+    {
+      "kind": "tools",
+      "model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "case": "search_only",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 5.697e-05,
+      "served_model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "usage": {
+        "prompt_tokens": 463,
+        "completion_tokens": 51,
+        "total_tokens": 514,
+        "cost": 5.697e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 5.697e-05,
+          "upstream_inference_prompt_cost": 4.167e-05,
+          "upstream_inference_completions_cost": 1.53e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 5.697e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "01a18c62a83630fca6e02ad252aaa63e",
+            "function": {
+              "name": "search",
+              "arguments": " {\"origin\": \"BOM\", \"destination\": \"DXB\", \"date\": \"2026-10-31\", \"time\": \"19:00\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "origin": "BOM",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "time": "19:00"
+      },
+      "latency_s": 6.51
+    },
+    {
+      "kind": "tools",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "book",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 4.53e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 281,
+        "completion_tokens": 43,
+        "total_tokens": 324,
+        "cost": 4.53e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 4.53e-05,
+          "upstream_inference_prompt_cost": 2.81e-05,
+          "upstream_inference_completions_cost": 1.72e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 4.53e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "tool_book_7rdWdxMLhxExVexUDVT5",
+            "function": {
+              "name": "book",
+              "arguments": "{\"date\":\"2026-10-31\",\"origin\":\"BOM\",\"time\":\"19:00\",\"destination\":\"DXB\"}"
+            }
+          }
+        ]
+      },
+      "actual": "book",
+      "arguments": {
+        "date": "2026-10-31",
+        "origin": "BOM",
+        "time": "19:00",
+        "destination": "DXB"
+      },
+      "latency_s": 1.666
+    },
+    {
+      "kind": "tools",
+      "model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "case": "followup",
+      "expected": "search",
+      "correct": false,
+      "error": null,
+      "cost_usd": 5.667e-05,
+      "served_model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "usage": {
+        "prompt_tokens": 473,
+        "completion_tokens": 47,
+        "total_tokens": 520,
+        "cost": 5.667e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 416,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 5.667e-05,
+          "upstream_inference_prompt_cost": 4.257e-05,
+          "upstream_inference_completions_cost": 1.41e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 5.667e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "01a18c62b49866aec30bc473af6e8780",
+            "function": {
+              "name": "search",
+              "arguments": " {\"origin\": \"Mumbai\", \"destination\": \"Dubai\", \"date\": \"2026-10-31\", \"time\": \"any\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "origin": "Mumbai",
+        "destination": "Dubai",
+        "date": "2026-10-31",
+        "time": "any"
+      },
+      "latency_s": 6.161
+    },
+    {
+      "kind": "classification",
+      "model": "typesafe/jev-1.13",
+      "case": "correction",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.7262e-05,
+      "served_model": "typesafe/jev-1.13-20260917",
+      "usage": {
+        "input_tokens": 411,
+        "output_tokens": 45,
+        "cost": 1.7262e-05
+      },
+      "platform_cost_usd": 1.7262e-05,
+      "byok": false,
+      "response": {
+        "intent": {
+          "type": "choice",
+          "choice": "book",
+          "probabilities": {
+            "search": 0,
+            "book": 0.85,
+            "cancel": 0,
+            "chat": 0.15
+          },
+          "confidence": 0.8
+        }
+      },
+      "actual": "book",
+      "latency_s": 1.873
+    },
+    {
+      "kind": "classification",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "search_only",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.000248,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 178,
+        "completion_tokens": 14,
+        "total_tokens": 192,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000248,
+          "upstream_inference_prompt_cost": 0.000178,
+          "upstream_inference_completions_cost": 7e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "```json\n{\"label\": \"search\"}\n```",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "search",
+      "latency_s": 1.938
+    },
+    {
+      "kind": "tools",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "missing",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 3.38e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 266,
+        "completion_tokens": 18,
+        "total_tokens": 284,
+        "cost": 3.38e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 3.38e-05,
+          "upstream_inference_prompt_cost": 2.66e-05,
+          "upstream_inference_completions_cost": 7.2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 3.38e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "What date and time would you like to travel, and where will you be flying from?",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 2.13
+    },
+    {
+      "kind": "classification",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "policy",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.000236,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 166,
+        "completion_tokens": 14,
+        "total_tokens": 180,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000236,
+          "upstream_inference_prompt_cost": 0.000166,
+          "upstream_inference_completions_cost": 7e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "```json\n{\"label\": \"chat\"}\n```",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 1.584
+    },
+    {
+      "kind": "tools",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "policy",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.001781,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 641,
+        "completion_tokens": 228,
+        "total_tokens": 869,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.001781,
+          "upstream_inference_prompt_cost": 0.000641,
+          "upstream_inference_completions_cost": 0.00114
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "I can help explain how cancellations work with this system!\n\nBased on the available tools, here's how cancellations work:\n\n**Cancellation Process:**\n- To cancel a booking, you need your **booking reference ID** (also called booking_id)\n- Once you have that reference, you can request a cancellation by providing it to the system\n- The system will process the cancellation request using that booking ID\n\n**What you'll need:**\n- Your booking reference/ID number (this is typically provided when you make a booking)\n\n**Important notes:**\n- I won't cancel anything unless you explicitly ask me to and provide the booking ID\n- The actual cancellation policies (refunds, fees, timing restrictions, etc.) would depend on the specific booking terms and the service provider's policies\n\nIf you have a booking you'd like to cancel, just provide me with the booking reference ID and I can help process that for you. Otherwise, if you'd like to search for flights or make a new booking, I'm happy to help with that too!",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 4.069
+    },
+    {
+      "kind": "tools",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "missing",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.001168,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 638,
+        "completion_tokens": 106,
+        "total_tokens": 744,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.001168,
+          "upstream_inference_prompt_cost": 0.000638,
+          "upstream_inference_completions_cost": 0.00053
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "I'd be happy to help you book a flight to Dubai! To complete your booking, I need a few more details:\n\n1. **Origin**: Where will you be flying from?\n2. **Date**: What date would you like to travel? (format: YYYY-MM-DD)\n3. **Time**: What time would you prefer? (format: HH:MM, or you can say \"any\")\n\nOnce you provide these details, I can proceed with your booking.",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 2.436
+    },
+    {
+      "kind": "classification",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "policy",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.77e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 157,
+        "completion_tokens": 5,
+        "total_tokens": 162,
+        "cost": 1.77e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 1.77e-05,
+          "upstream_inference_prompt_cost": 1.57e-05,
+          "upstream_inference_completions_cost": 2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 1.77e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "{\"label\":\"chat\"}",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 2.119
+    },
+    {
+      "kind": "classification",
+      "model": "typesafe/jev-1.13",
+      "case": "cancel",
+      "expected": "cancel",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.617e-05,
+      "served_model": "typesafe/jev-1.13-20260917",
+      "usage": {
+        "input_tokens": 385,
+        "output_tokens": 45,
+        "cost": 1.617e-05
+      },
+      "platform_cost_usd": 1.617e-05,
+      "byok": false,
+      "response": {
+        "intent": {
+          "type": "choice",
+          "choice": "cancel",
+          "probabilities": {
+            "search": 0,
+            "book": 0,
+            "cancel": 0.99,
+            "chat": 0.01
+          },
+          "confidence": 0.99
+        }
+      },
+      "actual": "cancel",
+      "latency_s": 1.909
+    },
+    {
+      "kind": "tools",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "policy",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 3.59e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 267,
+        "completion_tokens": 23,
+        "total_tokens": 290,
+        "cost": 3.59e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 3.59e-05,
+          "upstream_inference_prompt_cost": 2.67e-05,
+          "upstream_inference_completions_cost": 9.2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 3.59e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "To cancel your booking, you need to provide the booking ID. The cancellation will be processed based on that ID.",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 2.176
+    },
+    {
+      "kind": "classification",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "book",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.000245,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 175,
+        "completion_tokens": 14,
+        "total_tokens": 189,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000245,
+          "upstream_inference_prompt_cost": 0.000175,
+          "upstream_inference_completions_cost": 7e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "```json\n{\"label\": \"book\"}\n```",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "book",
+      "latency_s": 1.783
+    },
+    {
+      "kind": "classification",
+      "model": "typesafe/jev-1.13",
+      "case": "missing",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.6044e-05,
+      "served_model": "typesafe/jev-1.13-20260917",
+      "usage": {
+        "input_tokens": 382,
+        "output_tokens": 45,
+        "cost": 1.6044e-05
+      },
+      "platform_cost_usd": 1.6044e-05,
+      "byok": false,
+      "response": {
+        "intent": {
+          "type": "choice",
+          "choice": "chat",
+          "probabilities": {
+            "search": 0,
+            "book": 0.01,
+            "cancel": 0,
+            "chat": 0.99
+          },
+          "confidence": 0.99
+        }
+      },
+      "actual": "chat",
+      "latency_s": 1.858
+    },
+    {
+      "kind": "classification",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "book",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.91e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 171,
+        "completion_tokens": 5,
+        "total_tokens": 176,
+        "cost": 1.91e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 1.91e-05,
+          "upstream_inference_prompt_cost": 1.71e-05,
+          "upstream_inference_completions_cost": 2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 1.91e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "{\"label\":\"book\"}",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "book",
+      "latency_s": 1.797
+    },
+    {
+      "kind": "classification",
+      "model": "typesafe/jev-1.13",
+      "case": "search_only",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.6842e-05,
+      "served_model": "typesafe/jev-1.13-20260917",
+      "usage": {
+        "input_tokens": 401,
+        "output_tokens": 45,
+        "cost": 1.6842e-05
+      },
+      "platform_cost_usd": 1.6842e-05,
+      "byok": false,
+      "response": {
+        "intent": {
+          "type": "choice",
+          "choice": "search",
+          "probabilities": {
+            "search": 1,
+            "book": 0,
+            "cancel": 0,
+            "chat": 0
+          },
+          "confidence": 1
+        }
+      },
+      "actual": "search",
+      "latency_s": 1.27
+    },
+    {
+      "kind": "classification",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "correction",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 2.05e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 185,
+        "completion_tokens": 5,
+        "total_tokens": 190,
+        "cost": 2.05e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 2.05e-05,
+          "upstream_inference_prompt_cost": 1.85e-05,
+          "upstream_inference_completions_cost": 2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 2.05e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "{\"label\":\"book\"}",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "book",
+      "latency_s": 1.238
+    },
+    {
+      "kind": "classification",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "search",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.000245,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 175,
+        "completion_tokens": 14,
+        "total_tokens": 189,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000245,
+          "upstream_inference_prompt_cost": 0.000175,
+          "upstream_inference_completions_cost": 7e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "```json\n{\"label\": \"search\"}\n```",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "search",
+      "latency_s": 1.81
+    },
+    {
+      "kind": "classification",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "missing",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.000233,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 163,
+        "completion_tokens": 14,
+        "total_tokens": 177,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000233,
+          "upstream_inference_prompt_cost": 0.000163,
+          "upstream_inference_completions_cost": 7e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "```json\n{\"label\": \"chat\"}\n```",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 1.604
+    },
+    {
+      "kind": "tools",
+      "model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "case": "cancel",
+      "expected": "cancel",
+      "correct": true,
+      "error": null,
+      "cost_usd": 4.734e-05,
+      "served_model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "usage": {
+        "prompt_tokens": 446,
+        "completion_tokens": 24,
+        "total_tokens": 470,
+        "cost": 4.734e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 416,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 4.734e-05,
+          "upstream_inference_prompt_cost": 4.014e-05,
+          "upstream_inference_completions_cost": 7.2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 4.734e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "01a18c63080e4eed975fa07bfd705faa",
+            "function": {
+              "name": "cancel",
+              "arguments": " {\"booking_id\": \"old-reference-123\"}"
+            }
+          }
+        ]
+      },
+      "actual": "cancel",
+      "arguments": {
+        "booking_id": "old-reference-123"
+      },
+      "latency_s": 7.352
+    },
+    {
+      "kind": "classification",
+      "model": "typesafe/jev-1.13",
+      "case": "book",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.6674e-05,
+      "served_model": "typesafe/jev-1.13-20260917",
+      "usage": {
+        "input_tokens": 397,
+        "output_tokens": 45,
+        "cost": 1.6674e-05
+      },
+      "platform_cost_usd": 1.6674e-05,
+      "byok": false,
+      "response": {
+        "intent": {
+          "type": "choice",
+          "choice": "book",
+          "probabilities": {
+            "search": 0,
+            "book": 0.93,
+            "cancel": 0,
+            "chat": 0.07
+          },
+          "confidence": 0.91
+        }
+      },
+      "actual": "book",
+      "latency_s": 1.935
+    },
+    {
+      "kind": "tools",
+      "model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "case": "missing",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 4.617e-05,
+      "served_model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "usage": {
+        "prompt_tokens": 443,
+        "completion_tokens": 21,
+        "total_tokens": 464,
+        "cost": 4.617e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 416,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 4.617e-05,
+          "upstream_inference_prompt_cost": 3.987e-05,
+          "upstream_inference_completions_cost": 6.3e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 4.617e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "Could you please provide your departure city, the date of travel, and the preferred time for the flight?",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 3.102
+    },
+    {
+      "kind": "tools",
+      "model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "case": "correction",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 5.787e-05,
+      "served_model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "usage": {
+        "prompt_tokens": 473,
+        "completion_tokens": 51,
+        "total_tokens": 524,
+        "cost": 5.787e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 416,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 5.787e-05,
+          "upstream_inference_prompt_cost": 4.257e-05,
+          "upstream_inference_completions_cost": 1.53e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 5.787e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "01a18c631befa497cdf1f951e4e6b6a8",
+            "function": {
+              "name": "book",
+              "arguments": " {\"origin\": \"BOM\", \"destination\": \"DXB\", \"date\": \"2026-10-31\", \"time\": \"19:00\"}"
+            }
+          }
+        ]
+      },
+      "actual": "book",
+      "arguments": {
+        "origin": "BOM",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "time": "19:00"
+      },
+      "latency_s": 3.329
+    },
+    {
+      "kind": "classification",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "search_only",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.95e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 175,
+        "completion_tokens": 5,
+        "total_tokens": 180,
+        "cost": 1.95e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 1.95e-05,
+          "upstream_inference_prompt_cost": 1.75e-05,
+          "upstream_inference_completions_cost": 2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 1.95e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "{\"label\":\"search\"}",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "search",
+      "latency_s": 2.133
+    },
+    {
+      "kind": "classification",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "missing",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.76e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 156,
+        "completion_tokens": 5,
+        "total_tokens": 161,
+        "cost": 1.76e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 1.76e-05,
+          "upstream_inference_prompt_cost": 1.56e-05,
+          "upstream_inference_completions_cost": 2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 1.76e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "{\"label\":\"chat\"}",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 2.103
+    },
+    {
+      "kind": "tools",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "search",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.00117,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 650,
+        "completion_tokens": 104,
+        "total_tokens": 754,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00117,
+          "upstream_inference_prompt_cost": 0.00065,
+          "upstream_inference_completions_cost": 0.00052
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "toolu_012Gqx2Di1KqzV3akqkuu2st",
+            "function": {
+              "name": "search",
+              "arguments": "{\"origin\": \"BOM\", \"destination\": \"DXB\", \"date\": \"2026-10-31\", \"time\": \"19:00\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "origin": "BOM",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "time": "19:00"
+      },
+      "latency_s": 2.322
+    },
+    {
+      "kind": "tools",
+      "model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "case": "search",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 5.661e-05,
+      "served_model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "usage": {
+        "prompt_tokens": 459,
+        "completion_tokens": 51,
+        "total_tokens": 510,
+        "cost": 5.661e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 5.661e-05,
+          "upstream_inference_prompt_cost": 4.131e-05,
+          "upstream_inference_completions_cost": 1.53e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 5.661e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "01a18c6334d4ba23371c4603ff530bf2",
+            "function": {
+              "name": "search",
+              "arguments": " {\"origin\": \"BOM\", \"destination\": \"DXB\", \"date\": \"2026-10-31\", \"time\": \"19:00\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "origin": "BOM",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "time": "19:00"
+      },
+      "latency_s": 3.502
+    },
+    {
+      "kind": "tools",
+      "model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "case": "policy",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 5.745e-05,
+      "served_model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "usage": {
+        "prompt_tokens": 445,
+        "completion_tokens": 58,
+        "total_tokens": 503,
+        "cost": 5.745e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 416,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 5.745e-05,
+          "upstream_inference_prompt_cost": 4.005e-05,
+          "upstream_inference_completions_cost": 1.74e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 5.745e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "Cancellations can be made using the `cancel` function by providing the booking reference (booking_id). The system will process the cancellation if the booking exists and meets the cancellation policy. No action is taken unless explicitly requested. Let me know if you'd like to proceed with a cancellation.",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "chat",
+      "latency_s": 5.197
+    },
+    {
+      "kind": "classification",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "cancel",
+      "expected": "cancel",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.8e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 160,
+        "completion_tokens": 5,
+        "total_tokens": 165,
+        "cost": 1.8e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 1.8e-05,
+          "upstream_inference_prompt_cost": 1.6e-05,
+          "upstream_inference_completions_cost": 2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 1.8e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "{\"label\":\"cancel\"}",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "cancel",
+      "latency_s": 2.359
+    },
+    {
+      "kind": "tools",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "followup",
+      "expected": "search",
+      "correct": false,
+      "error": null,
+      "cost_usd": 4.55e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 295,
+        "completion_tokens": 40,
+        "total_tokens": 335,
+        "cost": 4.55e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 4.55e-05,
+          "upstream_inference_prompt_cost": 2.95e-05,
+          "upstream_inference_completions_cost": 1.6e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 4.55e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "tool_search_WRpHLySXxJ6zBSrCazOw",
+            "function": {
+              "name": "search",
+              "arguments": "{\"time\":\"anytime\",\"destination\":\"DXB\",\"date\":\"2026-10-31\",\"origin\":\"BOM\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "time": "anytime",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "origin": "BOM"
+      },
+      "latency_s": 2.366
+    },
+    {
+      "kind": "classification",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "followup",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 2.05e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 185,
+        "completion_tokens": 5,
+        "total_tokens": 190,
+        "cost": 2.05e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 2.05e-05,
+          "upstream_inference_prompt_cost": 1.85e-05,
+          "upstream_inference_completions_cost": 2e-06
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 2.05e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": "{\"label\":\"search\"}",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "search",
+      "latency_s": 1.63
+    },
+    {
+      "kind": "classification",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "correction",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.000257,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 187,
+        "completion_tokens": 14,
+        "total_tokens": 201,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000257,
+          "upstream_inference_prompt_cost": 0.000187,
+          "upstream_inference_completions_cost": 7e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "```json\n{\"label\": \"book\"}\n```",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "book",
+      "latency_s": 3.099
+    },
+    {
+      "kind": "classification",
+      "model": "typesafe/jev-1.13",
+      "case": "policy",
+      "expected": "chat",
+      "correct": true,
+      "error": null,
+      "cost_usd": 1.617e-05,
+      "served_model": "typesafe/jev-1.13-20260917",
+      "usage": {
+        "input_tokens": 385,
+        "output_tokens": 45,
+        "cost": 1.617e-05
+      },
+      "platform_cost_usd": 1.617e-05,
+      "byok": false,
+      "response": {
+        "intent": {
+          "type": "choice",
+          "choice": "chat",
+          "probabilities": {
+            "search": 0,
+            "book": 0,
+            "cancel": 0.07,
+            "chat": 0.93
+          },
+          "confidence": 0.91
+        }
+      },
+      "actual": "chat",
+      "latency_s": 1.306
+    },
+    {
+      "kind": "tools",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "cancel",
+      "expected": "cancel",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.000886,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 641,
+        "completion_tokens": 49,
+        "total_tokens": 690,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000886,
+          "upstream_inference_prompt_cost": 0.000641,
+          "upstream_inference_completions_cost": 0.000245
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "toolu_01JhZ2KGBzQsbB7tdss3V3eR",
+            "function": {
+              "name": "cancel",
+              "arguments": "{\"booking_id\": \"old-reference-123\"}"
+            }
+          }
+        ]
+      },
+      "actual": "cancel",
+      "arguments": {
+        "booking_id": "old-reference-123"
+      },
+      "latency_s": 2.815
+    },
+    {
+      "kind": "classification",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "followup",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.00026,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 190,
+        "completion_tokens": 14,
+        "total_tokens": 204,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00026,
+          "upstream_inference_prompt_cost": 0.00019,
+          "upstream_inference_completions_cost": 7e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "```json\n{\"label\": \"search\"}\n```",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "search",
+      "latency_s": 2.363
+    },
+    {
+      "kind": "tools",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "followup",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.001175,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 665,
+        "completion_tokens": 102,
+        "total_tokens": 767,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.001175,
+          "upstream_inference_prompt_cost": 0.000665,
+          "upstream_inference_completions_cost": 0.00051
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "toolu_01Lztc4NYnnnhpRWu2inreue",
+            "function": {
+              "name": "search",
+              "arguments": "{\"origin\": \"BOM\", \"destination\": \"DXB\", \"date\": \"2026-10-31\", \"time\": \"any\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "origin": "BOM",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "time": "any"
+      },
+      "latency_s": 2.158
+    },
+    {
+      "kind": "classification",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "cancel",
+      "expected": "cancel",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.000236,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 166,
+        "completion_tokens": 14,
+        "total_tokens": 180,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000236,
+          "upstream_inference_prompt_cost": 0.000166,
+          "upstream_inference_completions_cost": 7e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": "```json\n{\"label\": \"cancel\"}\n```",
+        "refusal": null,
+        "reasoning": null
+      },
+      "actual": "cancel",
+      "latency_s": 1.783
+    },
+    {
+      "kind": "tools",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "correction",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.001182,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 662,
+        "completion_tokens": 104,
+        "total_tokens": 766,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.001182,
+          "upstream_inference_prompt_cost": 0.000662,
+          "upstream_inference_completions_cost": 0.00052
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "toolu_01AQmRSYPG132i6GCuyYyfau",
+            "function": {
+              "name": "book",
+              "arguments": "{\"origin\": \"BOM\", \"destination\": \"DXB\", \"date\": \"2026-10-31\", \"time\": \"19:00\"}"
+            }
+          }
+        ]
+      },
+      "actual": "book",
+      "arguments": {
+        "origin": "BOM",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "time": "19:00"
+      },
+      "latency_s": 1.906
+    },
+    {
+      "kind": "tools",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "search",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 4.53e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 281,
+        "completion_tokens": 43,
+        "total_tokens": 324,
+        "cost": 4.53e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 4.53e-05,
+          "upstream_inference_prompt_cost": 2.81e-05,
+          "upstream_inference_completions_cost": 1.72e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 4.53e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "tool_search_GEEwhWzm1N52ivfO2ZHd",
+            "function": {
+              "name": "search",
+              "arguments": "{\"date\":\"2026-10-31\",\"time\":\"19:00\",\"origin\":\"BOM\",\"destination\":\"DXB\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "date": "2026-10-31",
+        "time": "19:00",
+        "origin": "BOM",
+        "destination": "DXB"
+      },
+      "latency_s": 1.32
+    },
+    {
+      "kind": "tools",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "correction",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 4.67e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 295,
+        "completion_tokens": 43,
+        "total_tokens": 338,
+        "cost": 4.67e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 4.67e-05,
+          "upstream_inference_prompt_cost": 2.95e-05,
+          "upstream_inference_completions_cost": 1.72e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 4.67e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "tool_book_kqvrBYQvaZ6TNPXbTycE",
+            "function": {
+              "name": "book",
+              "arguments": "{\"time\":\"19:00\",\"date\":\"2026-10-31\",\"origin\":\"BOM\",\"destination\":\"DXB\"}"
+            }
+          }
+        ]
+      },
+      "actual": "book",
+      "arguments": {
+        "time": "19:00",
+        "date": "2026-10-31",
+        "origin": "BOM",
+        "destination": "DXB"
+      },
+      "latency_s": 1.102
+    },
+    {
+      "kind": "tools",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "search_only",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 4.57e-05,
+      "served_model": "google/gemini-2.5-flash-lite",
+      "usage": {
+        "prompt_tokens": 285,
+        "completion_tokens": 43,
+        "total_tokens": 328,
+        "cost": 4.57e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 4.57e-05,
+          "upstream_inference_prompt_cost": 2.85e-05,
+          "upstream_inference_completions_cost": 1.72e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 4.57e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "tool_search_b33fkyWFl50hRZhxh3PG",
+            "function": {
+              "name": "search",
+              "arguments": "{\"origin\":\"BOM\",\"time\":\"19:00\",\"date\":\"2026-10-31\",\"destination\":\"DXB\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "origin": "BOM",
+        "time": "19:00",
+        "date": "2026-10-31",
+        "destination": "DXB"
+      },
+      "latency_s": 1.054
+    },
+    {
+      "kind": "tools",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "book",
+      "expected": "book",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.00117,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 650,
+        "completion_tokens": 104,
+        "total_tokens": 754,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00117,
+          "upstream_inference_prompt_cost": 0.00065,
+          "upstream_inference_completions_cost": 0.00052
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "toolu_017DjSYNb6gMWpi4Sc7cZJt5",
+            "function": {
+              "name": "book",
+              "arguments": "{\"origin\": \"BOM\", \"destination\": \"DXB\", \"date\": \"2026-10-31\", \"time\": \"19:00\"}"
+            }
+          }
+        ]
+      },
+      "actual": "book",
+      "arguments": {
+        "origin": "BOM",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "time": "19:00"
+      },
+      "latency_s": 1.659
+    },
+    {
+      "kind": "tools",
+      "model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "case": "book",
+      "expected": "book",
+      "correct": false,
+      "error": null,
+      "cost_usd": 5.661e-05,
+      "served_model": "qwen/qwen3-30b-a3b-instruct-2507",
+      "usage": {
+        "prompt_tokens": 459,
+        "completion_tokens": 51,
+        "total_tokens": 510,
+        "cost": 5.661e-05,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 416,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 5.661e-05,
+          "upstream_inference_prompt_cost": 4.131e-05,
+          "upstream_inference_completions_cost": 1.53e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 5.661e-05,
+      "byok": false,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "01a18c6372af7691c15271dbf75e673d",
+            "function": {
+              "name": "search",
+              "arguments": " {\"origin\": \"BOM\", \"destination\": \"DXB\", \"date\": \"2026-10-31\", \"time\": \"19:00\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "origin": "BOM",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "time": "19:00"
+      },
+      "latency_s": 2.746
+    },
+    {
+      "kind": "classification",
+      "model": "google/gemini-2.5-flash-lite",
+      "case": "search",
+      "expected": "search",
+      "correct": false,
+      "error": "HTTPStatusError",
+      "cost_usd": null,
+      "latency_s": 0.833
+    },
+    {
+      "kind": "tools",
+      "model": "anthropic/claude-haiku-4.5",
+      "case": "search_only",
+      "expected": "search",
+      "correct": true,
+      "error": null,
+      "cost_usd": 0.001173,
+      "served_model": "anthropic/claude-haiku-4.5",
+      "usage": {
+        "prompt_tokens": 653,
+        "completion_tokens": 104,
+        "total_tokens": 757,
+        "cost": 0,
+        "is_byok": true,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.001173,
+          "upstream_inference_prompt_cost": 0.000653,
+          "upstream_inference_completions_cost": 0.00052
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "platform_cost_usd": 0,
+      "byok": true,
+      "response": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "toolu_01WNZVAs7pKkXVjCjxSDbdEt",
+            "function": {
+              "name": "search",
+              "arguments": "{\"origin\": \"BOM\", \"destination\": \"DXB\", \"date\": \"2026-10-31\", \"time\": \"19:00\"}"
+            }
+          }
+        ]
+      },
+      "actual": "search",
+      "arguments": {
+        "origin": "BOM",
+        "destination": "DXB",
+        "date": "2026-10-31",
+        "time": "19:00"
+      },
+      "latency_s": 1.633
+    }
+  ]
+}

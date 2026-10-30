@@ -48,3 +48,15 @@ The HTTP smoke test obtains tokens from Keycloak and calls the running B process
   }
 ]
 ```
+
+## Full A integration verified
+
+After configuring OpenRouter, the live HTTP form test completed model parsing, A consent, B search, itinerary confirmation, booking, a new cancellation consent, and cancellation. No scope escalation was delegated to the model. Synthetic bookings from intermediate test runs were cancelled during cleanup.
+
+## Native agent tools
+
+The latest live run includes A agent_model -> tool_call(discover_airline) -> tool_result -> agent_model -> tool_call(book_flight) -> OAuth pause. After consent, B agent_model proposes search_inventory; B validates the delegation, then returns a canonical result. After itinerary confirmation B agent_model proposes create_booking (optionally preceded by inspect_flight). Cancellation follows a new A cancel_booking tool proposal and consent, then B cancel_reservation. Model credentials and access tokens are excluded from prompts and log events.
+
+## Official SDK transport update
+
+Current execution uses A2ACardResolver/JsonRpcTransport on A and A2AStarletteApplication/DefaultRequestHandler/AirlineExecutor on B, pinned SDK 0.3.26 / protocol 0.3.0. The live smoke passed after this migration. Earlier trace descriptions remain application-level explanations; JSON-RPC envelope parsing, task/event aggregation and typed serialization are now SDK-owned.

@@ -6,3 +6,5 @@ langgraph==1.0.2
 python-dotenv==1.2.1
 pytest==8.4.2
 tzdata==2025.2
+
+a2a-sdk[http-server]==0.3.26
