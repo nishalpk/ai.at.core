@@ -1,0 +1,9 @@
+{
+  "flights": [
+    { "id": "AI201", "origin": "BOM", "destination": "DXB", "date": "tomorrow", "depart": "07:00", "arrive": "08:45", "seats_left": 12, "price_usd": 210 },
+    { "id": "AI233", "origin": "BOM", "destination": "DXB", "date": "tomorrow", "depart": "19:00", "arrive": "20:45", "seats_left": 4, "price_usd": 240 },
+    { "id": "AI233E", "origin": "BOM", "destination": "DXB", "date": "tomorrow", "depart": "22:10", "arrive": "23:55", "seats_left": 0, "price_usd": 180 },
+    { "id": "EK501", "origin": "DXB", "destination": "BOM", "date": "tomorrow", "depart": "09:30", "arrive": "14:05", "seats_left": 30, "price_usd": 260 }
+  ],
+  "bookings": []
+}

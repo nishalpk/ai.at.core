@@ -1,0 +1,9 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.2
+    command: start-dev --import-realm
+    environment:
+      KC_HOSTNAME: http://localhost:8080
+    ports: ["127.0.0.1:8080:8080"]
+    volumes:
+      - ./runtime/keycloak:/opt/keycloak/data/import:ro
